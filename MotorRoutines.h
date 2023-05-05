@@ -1,0 +1,11 @@
+void automove_elev(int deg, int &autoMoveElevFlag, const int  Channel_15, const int  Channel_14, int Speed1);
+void move_elev_UP(const int  Channel_15, const int  Channel_14, int Speed1);
+void move_elev_DOWN(const int  Channel_15, const int  Channel_14, int Speed1);
+void automove_azim(int deg, int &autoMoveAzimFlag, const int  Channel_12, const int  Channel_13, int Speed2);
+void move_azim_EAST(const int  Channel_12, const int  Channel_13, int Speed2);
+void move_azim_WEST(const int  Channel_12, const int  Channel_13, int Speed2);
+void both_stop(const int  Channel_12, const int  Channel_13, const int  Channel_15, const int  Channel_14);
+void azimuth_stop(const int  Channel_12, const int  Channel_13);
+void elevation_stop(const int  Channel_15, const int  Channel_14);
+int read_azim_pot();
+int read_elev_pot();
