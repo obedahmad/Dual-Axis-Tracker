@@ -8,7 +8,8 @@
 #include <LiquidCrystal_I2C.h>
 #include <DS3232RTC.h>
 #include <TimeLib.h>
-
+#include "MotorRoutines.h"
+#include "PrintingUtilities.h"
 //BLYNK IoT Definitions
 #define BLYNK_TEMPLATE_ID "TMPLCzpL9-5g"
 #define BLYNK_DEVICE_NAME "Tracker"
@@ -79,10 +80,6 @@ int autoMoveElevFlag;     //Motion Flag for Azimuth Movement
 int autoMoveAzimFlag;     //Motion Flag for Elevation Movement
 int autoMoveElevDeg;      //Motion Flag for Elevation Movement
 int autoMoveAzimDeg;      //Motion Flag for Azimuth Movement
-// int check_auto_man;
-// int auto_man_flag=0;      //0=Manual, 1=Auto, 2=Calibrating
-// int elev_limits_flag=0; //elevation 2=UP, 1=DOWN, 0=NoLimit
-// int azim_limits_flag=0; //azimuth 2=EAST, 1=WEST, 0=NoLimit
 
 //Control Variable Declaration
 double elevation;
@@ -93,27 +90,11 @@ char daysOfTheWeek[7][12]={"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday
 byte hourRun, mintRun, secondRun,dateRun,monthRun; //Segmented tmElements_t for printing Local Time 
 String  lat_str,lng_str;
 
-void automove_elev(int deg);
-void move_elev_UP();
-void move_elev_DOWN();
-void automove_azim(int deg);
-void move_azim_EAST();
-void move_azim_WEST();
-void move_all_stop();
-void azimuth_stop();
-void elevation_stop();
-int read_azim_pot();
-int read_elev_pot();
-void updateData();
-void getRTC();
-void showTime();
-
 float latitude=34.0691;
 float longitude=72.6441;
 SolarTracker SolarObject(34.0691, 72.6441); //SolarTracker object initialized with coordinates for GIKI
 TinyGPSPlus gps;
 HardwareSerial SerialGPS(1);
-
 
 //- - - - - - - - - - SETUP FUNCTIONS - - - - - - - - - - -
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -154,7 +135,6 @@ Serial.println("Program Start");
 timer.setInterval(1000L, myTimerEvent); //BLYNK App Intiation
 }
 
-
 //- - - - - - - - - - LOOPS FUNCTIONS - - - - - - - - - - -
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void loop(){
@@ -182,13 +162,15 @@ while(SerialGPS.available() > 0){
 }
 Serial.println("update Location");
 
-updateData();
+printTime(RTC.get());
+Serial.println("");
+Serial.print(F("Topi:\t"));
+printSolarPosition(SolarObject.getSolarPosition(RTC.get()),digits);
 
 lcd.setCursor(0,1);lcd.print("x:");lcd.print(lat_str);lcd.print(" y:");lcd.print(lng_str);
 lcd.setCursor(0,2);lcd.print("ez:");lcd.print(azimuth);lcd.print(" el:");lcd.print(elevation);
 lcd.setCursor(0,3);lcd.print("x:");lcd.print(read_azim_pot()); 
 lcd.setCursor(10,3);lcd.print(" y:");lcd.print(read_elev_pot());
-
 
 if(elevation<=0){
   autoMoveElevDeg=UP_LIMIT_DEG;//90
@@ -227,11 +209,11 @@ autoMoveAzimFlag=0;
 if(elevation>=0)
 {
   if(autoMoveElevFlag==0){
-    automove_elev(autoMoveElevDeg);
+    automove_elev(autoMoveElevDeg, autoMoveElevFlag, Channel_15, Channel_14, Speed1);
     Serial.println("ELEVATION FLAG UP");
     }
   if(autoMoveAzimFlag==0){
-    automove_azim(autoMoveAzimDeg);
+    automove_azim(autoMoveAzimDeg, autoMoveAzimFlag, Channel_12, Channel_13, Speed2);
     Serial.println("AZIMUTH FLAG UP");
     }
 }

@@ -7,5 +7,6 @@ void move_azim_WEST(const int  Channel_12, const int  Channel_13, int Speed2);
 void both_stop(const int  Channel_12, const int  Channel_13, const int  Channel_15, const int  Channel_14);
 void azimuth_stop(const int  Channel_12, const int  Channel_13);
 void elevation_stop(const int  Channel_15, const int  Channel_14);
+void both_stop(const int  Channel_12, const int  Channel_13, const int  Channel_15, const int  Channel_14);
 int read_azim_pot();
 int read_elev_pot();
