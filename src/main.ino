@@ -103,9 +103,8 @@ void setup(){
 Serial.begin(115200);
 SerialGPS.begin(9600, SERIAL_8N1,RXD1,TXD1);//initRTC();
 
-///Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
-// SolarTracker::setTimeProvider(RTC.get);
-//setSyncProvider(myRTC.get);   // the function to get the time from the RTC
+Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+setSyncProvider(RTC.get);   // the function to get the time from the RTC
 RTC.begin();
 if(timeStatus() != timeSet) Serial.println("Unable to sync with the RTC");
 else Serial.println("RTC has set the system time");
